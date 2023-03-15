@@ -25,3 +25,14 @@ app.get('/talker', async (_req, res) => {
     res.status(200).json([]);
     }
 });
+
+app.get('/talker/:id', async (req, res) => {
+  const { id } = req.params;
+  const { getTalkerByID } = talkers;
+  const idTalker = await getTalkerByID(Number(id));
+  if (!idTalker) {
+  res.status(404).json({ message: 'Pessoa palestrante não encontrada' });
+  } else {
+  res.status(200).json(idTalker);
+  }
+});
