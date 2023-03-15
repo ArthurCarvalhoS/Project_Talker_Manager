@@ -1,5 +1,6 @@
 const express = require('express');
 const talkers = require('./talkers');
+const logged = require('./logged.json');
 
 const app = express();
 app.use(express.json());
@@ -35,4 +36,16 @@ app.get('/talker/:id', async (req, res) => {
   } else {
   res.status(200).json(idTalker);
   }
+});
+
+const rand = () => {
+  const random = Math.random(0).toString(36).substring(2);
+  return random;
+};
+const randomToken = (l) => (rand() + rand()).substring(0, l);
+  app.post('/login', (req, res) => {
+    const login = { ...req.body };
+    const idToken = randomToken(16);
+    logged.push(login);
+    res.status(200).json({ token: idToken });
 });
