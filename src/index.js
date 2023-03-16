@@ -2,6 +2,14 @@ const express = require('express');
 const talkers = require('./talkers');
 const logged = require('./logged.json');
 const { validatelogin } = require('./middlewares/validateLogin');
+const {
+  validateAuth, 
+  validateName, 
+  validateAge,
+  validateTalk,
+  validateWatchedAt,
+  validateRate, 
+} = require('./middlewares/validateTalker');
 
 const app = express();
 app.use(express.json());
@@ -50,4 +58,25 @@ const randomToken = (l) => (rand() + rand()).substring(0, l);
     const idToken = randomToken(16);
     logged.push(login);
     res.status(200).json({ token: idToken });
+});
+
+app.post('/talker', 
+validateAuth,
+validateName,
+validateAge,
+validateTalk,
+validateWatchedAt,
+validateRate,
+async (req, res) => {
+  const { name, age, talk } = req.body;
+
+  const talker = await talkers.getAllTalkers();
+  const newTalker = {
+    name,
+    age,
+    id: talker.length + 1,
+    talk,
+  };
+  await talkers.writeNewTalker(newTalker);
+  res.status(201).json(newTalker);
 });
