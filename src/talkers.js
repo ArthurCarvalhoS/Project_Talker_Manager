@@ -34,9 +34,9 @@ const writeNewTalker = async (newTalker) => {
 const updateTalker = async (id, updatingTalker) => {
     const talkers = await getAllTalkers();
     const updated = { id, ...updatingTalker };
-    const updatedTalker = talkers.reduce((_list, currentTalker) => {
-        if (currentTalker.id === updated) return updated;
-        return [currentTalker];
+    const updatedTalker = talkers.reduce((list, currentTalker) => {
+        if (currentTalker.id === updated) return [...list, updated];
+        return [...list, currentTalker];
     }, []);
 
     const updatedData = JSON.stringify(updatedTalker);
@@ -48,9 +48,21 @@ const updateTalker = async (id, updatingTalker) => {
     }
 };
 
+const deleteTalker = async (id) => {
+    const talkers = await getAllTalkers();
+    const filteringTalker = talkers.filter((t) => t.id !== Number(id));
+    const deletedTalker = JSON.stringify(filteringTalker);
+    try {
+    await fs.writeFile(join(__dirname, PATH), deletedTalker);
+    } catch (error) {
+        console.error(`Erro na escrita do arquivo: ${error.message}`);
+    }
+};
+
 module.exports = {
   getAllTalkers,
   getTalkerByID,
   writeNewTalker,
   updateTalker,
+  deleteTalker,
 };

@@ -104,3 +104,9 @@ validateRate,
   await talkers.updateTalker(updatedTalker);
   res.status(200).json(updatedTalker);
 });
+
+app.delete('/talker/:id', validateAuth, async (req, res) => {
+  const { id } = req.params;
+  await talkers.deleteTalker(id);
+  res.status(204).end();
+});
