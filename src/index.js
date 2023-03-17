@@ -101,7 +101,7 @@ validateRate,
     id: Number(id),
     talk,
   };
-  await talkers.updateTalker(updatedTalker);
+  await talkers.updateTalker(id, updatedTalker);
   res.status(200).json(updatedTalker);
 });
 

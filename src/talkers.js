@@ -35,7 +35,7 @@ const updateTalker = async (id, updatingTalker) => {
     const talkers = await getAllTalkers();
     const updated = { id, ...updatingTalker };
     const updatedTalker = talkers.reduce((list, currentTalker) => {
-        if (currentTalker.id === updated) return [...list, updated];
+        if (currentTalker.id === updated.id) return [...list, updated];
         return [...list, currentTalker];
     }, []);
 
