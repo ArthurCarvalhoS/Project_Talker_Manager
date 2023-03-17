@@ -80,3 +80,27 @@ async (req, res) => {
   await talkers.writeNewTalker(newTalker);
   res.status(201).json(newTalker);
 });
+
+app.put('/talker/:id',
+validateAuth,
+validateName,
+validateAge,
+validateTalk,
+validateWatchedAt,
+validateRate,
+ async (req, res) => {
+  const { name, age, talk } = req.body;
+  const { id } = req.params;
+  const talker = await talkers.getTalkerByID(Number(id));
+  if (!talker) {
+    return res.status(404).json({ message: 'Pessoa palestrante não encontrada' });
+  }
+  const updatedTalker = {
+    name,
+    age,
+    id: Number(id),
+    talk,
+  };
+  await talkers.updateTalker(updatedTalker);
+  res.status(200).json(updatedTalker);
+});
