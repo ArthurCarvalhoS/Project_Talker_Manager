@@ -36,6 +36,18 @@ app.get('/talker', async (_req, res) => {
     }
 });
 
+app.get('/talker/search',
+validateAuth,
+ async (req, res) => {
+  const { q } = req.query;
+  const talker = await talkers.getTalkerByName(q);
+  if (!talker || talker.length === 0) {
+   const allTalkers = await talkers.getAllTalkers();
+   return res.status(200).json(allTalkers);
+  }
+   return res.status(200).json(talker);
+  });
+
 app.get('/talker/:id', async (req, res) => {
   const { id } = req.params;
   const { getTalkerByID } = talkers;
