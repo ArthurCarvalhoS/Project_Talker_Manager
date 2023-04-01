@@ -62,6 +62,18 @@ function validateRate(req, res, next) {
     next();
 }
 
+function validateRateQuery(req, res, next) {
+    const { rate } = req.query;
+    const number = Number(rate);
+    if (!Number.isInteger(number) || !(rate >= 1 && rate <= 5)) { 
+           return res.status(400).json({
+               message: 'O campo "rate" deve ser um número inteiro entre 1 e 5',
+            });
+        }
+    
+    next();
+}
+
 module.exports = {
     validateAuth,
     validateName,
@@ -69,4 +81,5 @@ module.exports = {
     validateTalk,
     validateWatchedAt,
     validateRate,
+    validateRateQuery,
 };
