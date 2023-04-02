@@ -9,7 +9,8 @@ const {
   validateTalk,
   validateWatchedAt,
   validateRate,
-  validateRateQuery, 
+  validateRateQuery,
+  validateDateQuery,
 } = require('./middlewares/validateTalker');
 
 const app = express();
@@ -40,9 +41,10 @@ app.get('/talker', async (_req, res) => {
 app.get('/talker/search',
 validateAuth,
 validateRateQuery,
+validateDateQuery,
 async (req, res) => {
-  const { q, rate } = req.query;
-  const talker = await talkers.getTalkerByNameAndRate(q, rate);
+  const { q, rate, date } = req.query;
+    const talker = await talkers.getTalkerByNameRateAndDate(q, rate, date);
   if (!talker || talker.length === 0) {
     const allTalkers = await talkers.getAllTalkers();
     return res.status(200).json(allTalkers);
@@ -60,6 +62,7 @@ app.get('/talker/:id', async (req, res) => {
   res.status(200).json(idTalker);
   }
 });
+
 // https://stackoverflow.com/questions/8532406/create-a-random-token-in-javascript-based-on-user-details
 const rand = () => {
   const random = Math.random(0).toString(36).substring(2);
@@ -67,7 +70,7 @@ const rand = () => {
 };
 const randomToken = (l) => (rand() + rand()).substring(0, l);
 
-  app.post('/login', validatelogin, (req, res) => {
+app.post('/login', validatelogin, (req, res) => {
     const login = { ...req.body };
     const idToken = randomToken(16);
     logged.push(login);
@@ -103,7 +106,7 @@ validateTalk,
 validateWatchedAt,
 validateRate,
  async (req, res) => {
-  const { name, age, talk } = req.body;
+   const { name, age, talk } = req.body;
   const { id } = req.params;
   const talker = await talkers.getTalkerByID(Number(id));
   if (!talker) {
@@ -115,6 +118,7 @@ validateRate,
     id: Number(id),
     talk,
   };
+  
   await talkers.updateTalker(id, updatedTalker);
   res.status(200).json(updatedTalker);
 });

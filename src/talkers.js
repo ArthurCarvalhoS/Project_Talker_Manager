@@ -21,16 +21,61 @@ const getTalkerByID = async (id) => {
     return talkers.find((t) => t.id === id);
 };
 
-const getTalkerByNameAndRate = async (name, rate) => {
+const getRateById = async (id) => {
     const talkers = await readTalkerFile();
+    return talkers.find((t) => t.id === id);
+};
+
+const getTalkerByNameRate = async (name, rate) => {
+    const talkers = await readTalkerFile();
+    const talkerName = talkers.filter((t) => t.name.includes(name));
     if (!name) {
         return talkers.filter((t) => t.talk.rate === Number(rate));
     }
-    const talkerName = talkers.filter((t) => t.name.includes(name));
     if (!rate) {
         return talkerName;
     }
     return talkerName.filter((t) => t.talk.rate === Number(rate));
+};
+
+const getTalkerByRateDate = async (rate, date) => {
+    const talkers = await readTalkerFile();
+    const talkerRate = talkers.filter((t) => t.talk.rate === Number(rate));
+    if (!date) {
+        return talkerRate;
+    }
+    if (!rate) {
+        return talkers.filter((t) => t.talk.watchedAt === date);
+    }
+    return talkerRate.filter((t) => t.talk.watchedAt === date);
+};
+
+const getTalkerByDateName = async (date, name) => {
+    const talkers = await readTalkerFile();
+    const talkerName = talkers.filter((t) => t.name.includes(name));
+    if (!name) {
+        return talkers.filter((t) => t.talk.watchedAt === date);
+    }
+    if (!date) {
+        return talkerName;
+    }
+    return talkerName.filter((t) => t.talk.watchedAt === date);
+};
+const getTalkerByNameRateAndDate = async (name, rate, date) => {
+    const talkers = await readTalkerFile();
+    const talkerName = talkers.filter((t) => t.name.includes(name));
+    const talkerNameRate = talkerName.filter((t) => t.talk.rate === Number(rate));
+    const allTalkers = talkerNameRate.filter((t) => t.talk.watchedAt === date);
+    if (!date) {
+        return getTalkerByNameRate(name, rate);
+    }
+    if (!rate) {
+        return getTalkerByDateName(date, name);
+    }
+    if (!name) {
+        return getTalkerByRateDate(rate, date);
+    }
+    return allTalkers;
 };
 
 const writeNewTalker = async (newTalker) => {
@@ -74,7 +119,8 @@ const deleteTalker = async (id) => {
 module.exports = {
   getAllTalkers,
   getTalkerByID,
-  getTalkerByNameAndRate,
+  getRateById,
+  getTalkerByNameRateAndDate,
   writeNewTalker,
   updateTalker,
   deleteTalker,

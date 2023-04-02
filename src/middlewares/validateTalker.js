@@ -64,6 +64,9 @@ function validateRate(req, res, next) {
 
 function validateRateQuery(req, res, next) {
     const { rate } = req.query;
+    if (!rate) {
+        return next();
+    }
     const number = Number(rate);
     if (!Number.isInteger(number) || !(rate >= 1 && rate <= 5)) { 
            return res.status(400).json({
@@ -71,6 +74,18 @@ function validateRateQuery(req, res, next) {
             });
         }
     
+    next();
+}
+
+function validateDateQuery(req, res, next) {
+    const { date } = req.query;
+    if (!date) {
+        return next();
+    }
+    const validDate = /^\d{1,2}\/\d{1,2}\/\d{4}$/;
+    if (!validDate.test(date)) {
+    return res.status(400).json({ message: 'O parâmetro "date" deve ter o formato "dd/mm/aaaa"' });
+    }    
     next();
 }
 
@@ -82,4 +97,5 @@ module.exports = {
     validateWatchedAt,
     validateRate,
     validateRateQuery,
+    validateDateQuery,
 };
