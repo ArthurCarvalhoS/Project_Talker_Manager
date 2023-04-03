@@ -13,6 +13,7 @@ const {
   validateDateQuery,
   validateRatePatch,
 } = require('./middlewares/validateTalker');
+const connection = require('./db/connection');
 
 const app = express();
 app.use(express.json());
@@ -25,8 +26,30 @@ app.get('/', (_request, response) => {
   response.status(HTTP_OK_STATUS).send();
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log('Online');
+  const [result] = await connection.execute('SELECT 1');
+  if (result) {
+    console.log('conexão boa');
+}
+});
+
+app.get('/talker/db', async (_req, res) => {
+const allTalkers = await talkers.getAllTalkersDB();
+const formatTalkers = allTalkers.map((t) => ({
+  name: t.name,
+  age: t.age,
+  id: t.id,
+  talk: {
+    watchedAt: t.talk_watched_at,
+    rate: t.talk_rate,
+  },
+}));
+if (allTalkers) {
+  res.status(200).json(formatTalkers);
+  } else {
+  res.status(200).json([]);
+  }
 });
 
 app.get('/talker', async (_req, res) => {

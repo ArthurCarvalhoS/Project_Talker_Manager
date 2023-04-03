@@ -1,5 +1,6 @@
 const fs = require('fs').promises;
 const { join } = require('path');
+const connection = require('./db/connection');
 
 const PATH = '/talker.json';
 const readTalkerFile = async () => {
@@ -9,6 +10,13 @@ const readTalkerFile = async () => {
     } catch (err) {
         return null;
     }
+};
+
+const getAllTalkersDB = async () => {
+    const [result] = await connection.execute(
+        'SELECT * FROM TalkerDB.talkers',
+    );
+    return result;
 };
 
 const getAllTalkers = async () => {
@@ -112,8 +120,6 @@ const updateTalkerRate = async (id, rate) => {
     const updatedData = JSON.stringify(talkers);
     try {
         await fs.writeFile(join(__dirname, PATH), updatedData);
-        const teste = await getAllTalkers();
-        console.log(teste);
     } catch (error) {
         console.error(`Erro na escrita do arquivo: ${error.message}`);
     }
@@ -132,6 +138,7 @@ const deleteTalker = async (id) => {
 
 module.exports = {
   getAllTalkers,
+  getAllTalkersDB,
   getTalkerByID,
   getRateById,
   getTalkerByNameRateAndDate,
