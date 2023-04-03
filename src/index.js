@@ -11,6 +11,7 @@ const {
   validateRate,
   validateRateQuery,
   validateDateQuery,
+  validateRatePatch,
 } = require('./middlewares/validateTalker');
 
 const app = express();
@@ -121,6 +122,16 @@ validateRate,
   
   await talkers.updateTalker(id, updatedTalker);
   res.status(200).json(updatedTalker);
+});
+
+app.patch('/talker/rate/:id', 
+validateAuth,
+validateRatePatch,
+async (req, res) => {
+  const { id } = req.params;
+  const { rate } = req.body;
+  await talkers.updateTalkerRate(id, rate);
+  return res.status(204).end();
 });
 
 app.delete('/talker/:id', validateAuth, async (req, res) => {

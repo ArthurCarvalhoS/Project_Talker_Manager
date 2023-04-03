@@ -105,6 +105,20 @@ const updateTalker = async (id, updatingTalker) => {
     }
 };
 
+const updateTalkerRate = async (id, rate) => {
+    const talkers = await getAllTalkers();
+    const index = talkers.findIndex((t) => t.id === Number(id));
+    talkers[index].talk.rate = rate;
+    const updatedData = JSON.stringify(talkers);
+    try {
+        await fs.writeFile(join(__dirname, PATH), updatedData);
+        const teste = await getAllTalkers();
+        console.log(teste);
+    } catch (error) {
+        console.error(`Erro na escrita do arquivo: ${error.message}`);
+    }
+};
+
 const deleteTalker = async (id) => {
     const talkers = await getAllTalkers();
     const filteringTalker = talkers.filter((t) => t.id !== Number(id));
@@ -123,5 +137,6 @@ module.exports = {
   getTalkerByNameRateAndDate,
   writeNewTalker,
   updateTalker,
+  updateTalkerRate,
   deleteTalker,
 };
